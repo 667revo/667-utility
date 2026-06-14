@@ -4,6 +4,7 @@ from src.ui.style import get_stylesheet
 from src.ui.views.optimizer import OptimizerView
 from src.ui.views.uninstaller import UninstallerView
 from src.ui.views.installer import InstallerView
+from src.ui.rain import RainEffect
 
 
 class MainWindow(QMainWindow):
@@ -36,4 +37,14 @@ class MainWindow(QMainWindow):
 
         self.sidebar.currentRowChanged.connect(self.pages.setCurrentIndex)
         self.sidebar.setCurrentRow(0)
+
+        self.rain_background = RainEffect(root, drop_count=120)
+        self.rain_background.setGeometry(root.rect())
+        self.rain_background.lower()
+
         self.setStyleSheet(get_stylesheet())
+
+    def resizeEvent(self, event):
+        if hasattr(self, 'rain_background'):
+            self.rain_background.setGeometry(self.centralWidget().rect())
+        super().resizeEvent(event)

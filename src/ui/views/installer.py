@@ -1,3 +1,5 @@
+from email import message
+
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QGridLayout, QFrame, QComboBox, QPushButton
 from PySide6.QtCore import QThread, Slot, Signal
 
@@ -65,7 +67,7 @@ class InstallerView(QWidget):
 
 
     @Slot(bool)
-    def on_installation_finished(self, success):
+    def on_installation_finished(self, success, message):
         self.install_button.setEnabled(True)
 
         if success:
@@ -73,7 +75,7 @@ class InstallerView(QWidget):
 
         else:
 
-            self.status_label.setText("Installation failed")
+            self.status_label.setText(f"Installation failed:{message}")
 
 
 
@@ -87,7 +89,7 @@ class InstallerBox(QComboBox):
 class InstallitionWorker(QThread):
 
     progress = Signal(str)
-    finished = Signal(bool)
+    finished = Signal(bool, str)
 
     def __init__(self, winget_id):
         super().__init__()
@@ -97,11 +99,12 @@ class InstallitionWorker(QThread):
         try:
             from core.installer import install_by_winget_id
 
-            for line in install_by_winget_id(self.winget_id):
-                self.progress.emit(line)
+            exit_code, output = install_by_winget_id(self.winget_id)
 
-            self.finished.emit(True)
+            if exit_code == 0:
+                self.finished.emit(True, "Installation completed successfully.")
+            else:
+                self.finished.emit(False, output)
 
         except Exception as e:
-            self.progress.emit(f"Error : {str(e)}")
-            self.finished.emit(False)
+            self.finished.emit(False, str(e))
