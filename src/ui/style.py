@@ -1,21 +1,21 @@
+## (168, 85, 247, 0.25
+
+
 def get_stylesheet() -> str:
     return """
     QWidget {
         color: #F5F2FF;
-        font-family: 'Segoe UI';
+        font-family: 'JetBrainsMonoNerdFont-Bold';
         font-size: 14px;
     }
 
     QMainWindow, #RootWidget {
-        background: qlineargradient(
-            x1: 0, y1: 0, x2: 1, y2: 1,
-            stop: 0 #0B0714,
-            stop: 1 #1A1033
-        );
+        background: rgba(12, 8, 24, 0.75)
+        
     }
 
     #Sidebar {
-        background: rgba(12, 8, 24, 0.75);
+        background: rgba(12, 8, 30, 0.75);
         border: 1px solid rgba(167, 139, 250, 0.2);
         border-radius: 16px;
         padding: 10px;
@@ -28,8 +28,12 @@ def get_stylesheet() -> str:
         color: #CDBDF3;
     }
 
+    QFormLayout {
+        font-family: 'JetBrainsMonoNerdFont-Light'
+    }
+
     QListWidget::item:selected {
-        background: rgba(168, 85, 247, 0.25);
+        background: (168, 85, 247, 0.25);
         border: 1px solid rgba(168, 85, 247, 0.45);
         color: #F5F2FF;
     }

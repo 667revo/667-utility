@@ -19,6 +19,7 @@ class MainWindow(QMainWindow):
         layout = QHBoxLayout(root)
 
         self.sidebar = QListWidget()
+        self.sidebar.setObjectName("Sidebar")
         self.sidebar.addItems(["Dashboard", "Optimizer", "Installer", "Uninstaller"])
         self.sidebar.setFixedWidth(220)
 
