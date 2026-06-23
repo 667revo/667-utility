@@ -26,7 +26,7 @@ class MainWindow(QMainWindow):
 
         self.pages = QStackedWidget()
         self.dashboard = DashboardView()
-        self.optimizer = OptimizerView()
+        self.optimizer = OptimizerPage()
         self.installer = InstallerView()
         self.uninstaller = UninstallerView()
         self.pages.addWidget(self.dashboard)

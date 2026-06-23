@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QGridLayout, QFrame,
 from src.ui.theme import Colors
 from src.ui.views.optimizer_card import OptimizerCard
 from src.ui.views.modern_button import ModernButton
+import subprocess
 
 class OptimizerView(QWidget):
     def __init__(self, parent=None):
@@ -10,6 +11,51 @@ class OptimizerView(QWidget):
         layout = QVBoxLayout(self)
         label = QLabel("Optimizer")
         layout.addWidget(label)
+
+class Optimizations():
+    @staticmethod
+    def disable_sysmain():
+        result = subprocess.run(
+            ["sc", "stop", "SysMain"],
+            capture_output=True, text=True
+            )
+        return result.returncode == 0
+    
+    @staticmethod
+    def set_high_performance():
+        result = subprocess.run(         
+            ["powercfg", "/setactive", "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"],
+            capture_output=True, text= True
+        )
+        subprocess.run(["sc", "config", "SysMain", "start=disabled"])
+        return result.returncode == 0
+    
+    @staticmethod
+    def disable_telemetry():
+
+        services = ["DiagTrack","dmwappushservice"]
+
+        for svc in services:
+            subprocess.run(["sc", "stop", svc])
+            subprocess.run(["sc", "config", svc, "start=disabled"])
+
+    @staticmethod
+    def clear_temp():
+        result = subprocess.run(
+            ["cmd", "/c", "del /q /f /s %TEMP%\\*"]
+        )
+
+        return True
+    
+    @staticmethod
+    def disable_search_index():
+        result = subprocess.run(
+            ["sc", "stop", "WSearch"],
+            capture_output=True, text= True
+        )
+        subprocess.run(["sc", "config", "WSearch", "start=disabled"])
+        return result.returncode==0
+
 
 class OptimizerPage(QWidget):
     def __init__(self):
@@ -47,26 +93,29 @@ class OptimizerPage(QWidget):
         optimizations = [
             ("Disable SysMain (Superfetch)",
              "Reduces disk usage on SSDs. Recommended for systems with 8GB+ RAM.",
-             "safe"),
+             "safe", Optimizations.disable_sysmain),
             ("Set High Performance Power Plan",
              "Maximizes CPU performance. Increases power consumption on laptops.",
-             "warning"),
+             "warning", Optimizations.set_high_performance),
             ("Disable Telemetry Services",
              "Stops Windows data collection. May affect Windows Update in rare cases.",
-             "warning"),
+             "warning", Optimizations.disable_telemetry),
             ("Clear Temp Files",
              "Removes temporary files from %TEMP% and Windows\\Temp folders.",
-             "safe"),
+             "safe", Optimizations.clear_temp),
             ("Disable Xbox Game Bar",
              "Frees up background resources. Disables overlay and recording features.",
-             "safe"),
+             "safe", None),
             ("Disable Search Indexing",
              "Reduces CPU/disk usage. Search results may be slower to appear.",
-             "danger"),
+             "danger", Optimizations.disable_search_index),
+            ("Service Reducer,",
+             "Reduces Services executed on CPU and gives smoother game experience",
+             "safe", None)
         ]
 
-        for title_text, desc, status in optimizations:
-            card = OptimizerCard(title_text, desc, status)
+        for title_text, desc, status, callback in optimizations:
+            card = OptimizerCard(title_text, desc, status, callback=callback)
             cards_layout.addWidget(card)
 
         cards_layout.addStretch()
