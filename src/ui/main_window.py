@@ -4,6 +4,7 @@ from src.ui.style import get_stylesheet
 from src.ui.views.optimizer import OptimizerView
 from src.ui.views.uninstaller import UninstallerView
 from src.ui.views.installer import InstallerView
+from src.ui.views.optimizer import OptimizerView, OptimizerCard, OptimizerPage
 from src.ui.rain import RainEffect
 
 

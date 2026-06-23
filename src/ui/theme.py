@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QColor
+from PySide6.QtGui import QColor
 
 class Colors:
     BG_0 = "#130533"
