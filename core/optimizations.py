@@ -1,5 +1,4 @@
 import subprocess
-import os
 
 def run_cmd(cmd: list):
     try:
@@ -9,7 +8,7 @@ def run_cmd(cmd: list):
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=5
+            timeout=2
         )
     except subprocess.TimeoutExpired:
             print(f"Timeout: {cmd}")

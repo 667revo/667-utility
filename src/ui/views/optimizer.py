@@ -1,19 +1,15 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QGridLayout, QFrame, QScrollArea, QHBoxLayout
-from src.ui.theme import Colors
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame, QScrollArea, QHBoxLayout
 from src.ui.views.optimizer_card import OptimizerCard
 from src.ui.views.modern_button import ModernButton
 from core.optimizations import Optimizations
-import subprocess
+
 
 class OptimizerView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        # şimdilik placeholder, sonra doldururuz
         layout = QVBoxLayout(self)
         label = QLabel("Optimizer")
         layout.addWidget(label)
-
-
 
 
 class OptimizerPage(QWidget):
@@ -21,34 +17,33 @@ class OptimizerPage(QWidget):
         super().__init__()
         self._build_ui()
 
+    def applied_count(self) -> int:
+        return sum(1 for card in self.cards if card.is_applied)
+
     def _build_ui(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(32, 32, 32, 32)
         layout.setSpacing(24)
 
-        # Başlık
         header = QVBoxLayout()
         title = QLabel("System Optimizer")
-        title.setStyleSheet(f"""
-            font-size: 24px;
-            font-weight: 700;
-        """)
+        title.setStyleSheet("font-size: 24px; font-weight: 700;")
         subtitle = QLabel("Apply tweaks to improve performance and responsiveness.")
         header.addWidget(title)
         header.addWidget(subtitle)
         layout.addLayout(header)
 
-        # Scroll alanı
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("QScrollArea { background: transparent; border: none; }")
 
         scroll_content = QWidget()
+        scroll_content.setStyleSheet("background: transparent;")
         cards_layout = QVBoxLayout(scroll_content)
         cards_layout.setSpacing(12)
         cards_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Kartlar — bunlar optimizer seçeneklerin
         optimizations = [
             ("Disable SysMain (Superfetch)",
              "Reduces disk usage on SSDs. Recommended for systems with 8GB+ RAM.",
@@ -70,20 +65,23 @@ class OptimizerPage(QWidget):
              "warning", Optimizations.disable_search_index, Optimizations.enable_search_index),
             ("Service Reducer",
              "Reduces Services executed on CPU and gives smoother game experience",
-             "safe", Optimizations.reduce_services, Optimizations.restore_services)
+             "safe", Optimizations.reduce_services, Optimizations.restore_services),
         ]
 
+        self.cards = []
         for title_text, desc, status, callback, undo_callback in optimizations:
-            card = OptimizerCard(title_text, desc, status,
-                                 callback=callback,
-                                 undo_callback=undo_callback)
+            card = OptimizerCard(
+                title_text, desc, status,
+                callback=callback,
+                undo_callback=undo_callback
+            )
+            self.cards.append(card)
             cards_layout.addWidget(card)
 
         cards_layout.addStretch()
         scroll.setWidget(scroll_content)
         layout.addWidget(scroll)
 
-        # Alt butonlar
         bottom = QHBoxLayout()
         apply_all = ModernButton("Apply All Safe", variant="primary")
         apply_all.setFixedWidth(160)

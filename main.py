@@ -1,11 +1,15 @@
 import ctypes
 import sys
+import warnings
 from src.ui.app import run_app
+
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
     except:
+
         return False
 
 if __name__ == "__main__":

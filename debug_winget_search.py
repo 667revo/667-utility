@@ -1,5 +1,4 @@
 import subprocess
-import importlib
 import core.search
 
 def run_shell_search(q):

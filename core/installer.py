@@ -1,40 +1,39 @@
 import subprocess
-import sys
 import shutil
 from typing import Tuple
 
 def install_by_winget_id(winget_id: str) -> Tuple[int, str]:
-    if shutil.which("winget"):
-        cmd = [
-            "winget", "install", "--id", winget_id, "-e",
-            "--accept-package-agreements", "--accept-source-agreements"
-        ]
-    elif sys.platform.startswith("linux"):
-        if shutil.which("apt"):
-            pkg_name = winget_id
-            cmd = ["sudo", "apt", "install", "-y", pkg_name]
-        elif shutil.which("snap"):
-            pkg_name = winget_id
-            cmd = ["sudo", "snap", "install", pkg_name]
-        else:
-            return -3, "No supported package manager found on this system."
-    else:
-        return -1, "winget not found on PATH and OS not supported."
+    if not shutil.which("winget"):
+        return -1, "winget not found on PATH."
+
+    cmd = [
+        "winget", "install", "--id", winget_id, "-e",
+        "--accept-package-agreements", "--accept-source-agreements",
+        "--silent"
+    ]
 
     try:
         res = subprocess.run(
             cmd,
             check=False,
             capture_output=True,
-            text=True
+            text=True,
+            encoding="utf-8",
+            errors="replace"
         )
-        out = ""
-        if res.stdout:
-            out += res.stdout
+        out = res.stdout or ""
         if res.stderr:
-            out += ("\n[stderr]\n" + res.stderr)
-        return res.returncode, out or f"command exited with code {res.returncode}"
+            out += f"\n[stderr]\n{res.stderr}"
+        return res.returncode, out or f"Exited with code {res.returncode}"
     except FileNotFoundError:
-        return -2, "Error: installer command not found (FileNotFoundError)"
+        return -2, "winget not found."
     except Exception as e:
-        return -4, f"Unexpected exception: {e}"
+        return -4, f"Unexpected error: {e}"
+
+
+def install_multiple(winget_ids: list[str]) -> list[Tuple[str, int, str]]:
+    results = []
+    for winget_id in winget_ids:
+        code, out = install_by_winget_id(winget_id)
+        results.append((winget_id, code, out))
+    return results

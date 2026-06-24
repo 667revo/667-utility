@@ -1,17 +1,17 @@
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel,QGraphicsDropShadowEffect
-from src.ui.views.modern_button import ModernButton
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QGraphicsDropShadowEffect
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QThread, Signal
 from PySide6.QtGui import QColor
+from src.ui.views.modern_button import ModernButton
 from src.ui.theme import Colors
 from typing import Callable
-from PySide6.QtCore import QThread, Signal
-import subprocess
+
 
 class OptimizerWork(QThread):
     finished = Signal(bool)
 
-    def __init__(self,callback):
+    def __init__(self, callback):
         super().__init__()
-        self.callback=callback
+        self.callback = callback
 
     def run(self):
         try:
@@ -27,7 +27,6 @@ class OptimizerCard(QFrame):
                  callback: Callable | None = None,
                  undo_callback: Callable | None = None,
                  parent=None):
-
         super().__init__(parent)
         self.setObjectName("OptimizerCard")
         self.callback = callback
@@ -35,19 +34,23 @@ class OptimizerCard(QFrame):
         self.is_applied = False
         self._build_ui(title, description, status)
         self._apply_style()
-        self._add_shadow()
+        self._setup_shadow()
 
     def _build_ui(self, title, description, status):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(20, 16, 20, 16)
         layout.setSpacing(16)
 
-        # Sol: status indicator (renkli çizgi)
         indicator = QFrame()
         indicator.setFixedWidth(3)
         indicator.setFixedHeight(40)
+        if status == "safe":
+            indicator.setStyleSheet("background: rgba(168, 85, 247, 0.8); border-radius: 1px;")
+        elif status == "warning":
+            indicator.setStyleSheet("background: rgba(251, 191, 36, 0.8); border-radius: 1px;")
+        else:
+            indicator.setStyleSheet("background: rgba(248, 113, 113, 0.8); border-radius: 1px;")
 
-        # Orta: metin
         text_layout = QVBoxLayout()
         text_layout.setSpacing(4)
 
@@ -61,7 +64,6 @@ class OptimizerCard(QFrame):
         text_layout.addWidget(title_label)
         text_layout.addWidget(desc_label)
 
-        # Sağ: buton
         btn_text = "Apply" if status != "danger" else "Apply Risk"
         btn_variant = "primary" if status == "safe" else "danger"
         self.action_btn = ModernButton(btn_text, variant=btn_variant)
@@ -72,7 +74,7 @@ class OptimizerCard(QFrame):
         layout.addLayout(text_layout, stretch=1)
         layout.addWidget(self.action_btn)
 
-    def _on_click(self): 
+    def _on_click(self):
         if not self.is_applied:
             if self.callback:
                 self.worker = OptimizerWork(self.callback)
@@ -93,7 +95,6 @@ class OptimizerCard(QFrame):
         if success:
             self.is_applied = True
             self.action_btn.setText("Revert")
-
         else:
             self.action_btn.setText("Apply")
 
@@ -118,9 +119,30 @@ class OptimizerCard(QFrame):
             }}
         """)
 
-    def _add_shadow(self):
-        shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(20)
-        shadow.setColor(QColor(0, 0, 0, 80))
-        shadow.setOffset(0, 4)
-        self.setGraphicsEffect(shadow)
+    def _setup_shadow(self):
+        self._shadow = QGraphicsDropShadowEffect()
+        self._shadow.setBlurRadius(14)
+        self._shadow.setColor(QColor(0, 0, 0, 70))
+        self._shadow.setOffset(0, 3)
+        self.setGraphicsEffect(self._shadow)
+
+        self._shadow_anim = QPropertyAnimation(self._shadow, b"blurRadius")
+        self._shadow_anim.setEasingCurve(QEasingCurve.OutCubic)
+
+    def enterEvent(self, event):
+        self._shadow_anim.stop()
+        self._shadow.setColor(QColor(130, 50, 220, 80))
+        self._shadow_anim.setDuration(200)
+        self._shadow_anim.setStartValue(self._shadow.blurRadius())
+        self._shadow_anim.setEndValue(32)
+        self._shadow_anim.start()
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        self._shadow_anim.stop()
+        self._shadow.setColor(QColor(0, 0, 0, 70))
+        self._shadow_anim.setDuration(300)
+        self._shadow_anim.setStartValue(self._shadow.blurRadius())
+        self._shadow_anim.setEndValue(14)
+        self._shadow_anim.start()
+        super().leaveEvent(event)
