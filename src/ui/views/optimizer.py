@@ -45,27 +45,73 @@ class OptimizerPage(QWidget):
         cards_layout.setContentsMargins(0, 0, 0, 0)
 
         optimizations = [
-            ("Disable SysMain (Superfetch)",
-             "Reduces disk usage on SSDs. Recommended for systems with 8GB+ RAM.",
-             "safe", Optimizations.disable_sysmain, Optimizations.enable_sysmain),
-            ("Set High Performance Power Plan",
-             "Maximizes CPU performance. Increases power consumption on laptops.",
-             "safe", Optimizations.set_high_performance, None),
-            ("Disable Telemetry Services",
-             "Stops Windows data collection. May affect Windows Update in rare cases.",
-             "safe", Optimizations.disable_telemetry, Optimizations.enable_telemetry),
-            ("Clear Temp Files",
-             "Removes temporary files from %TEMP% and Windows\\Temp folders.",
-             "safe", Optimizations.clear_temp, None),
-            ("Disable Xbox Services and GameBar",
-             "Frees up background resources. Disables overlay and recording features.",
-             "safe", Optimizations.disable_xbox_services, Optimizations.enable_xbox_services),
-            ("Disable Search Indexing",
-             "Reduces CPU/disk usage. Search results may be slower to appear.",
-             "warning", Optimizations.disable_search_index, Optimizations.enable_search_index),
-            ("Service Reducer",
-             "Reduces Services executed on CPU and gives smoother game experience",
-             "safe", Optimizations.reduce_services, Optimizations.restore_services),
+            (
+                "Clear Temp Files",
+                "Removes temporary files from %TEMP% and Windows\\Temp folders.",
+                "safe",
+                Optimizations.clear_temp,
+                None,
+            ),
+            (
+                "Disable SysMain (Superfetch)",
+                "Reduces disk usage on SSDs. Recommended for systems with 8GB+ RAM.",
+                "safe",
+                Optimizations.disable_sysmain,
+                Optimizations.enable_sysmain,
+            ),
+            (
+                "Regedit Tweaks",
+                "Applies all registry tweaks for CPU, GPU and system performance.",
+                "warning",
+                Optimizations.apply_all_reg,
+                None
+            ),
+            (
+                "Lower Input Delay",
+                "Lowers input delay with optimizing boot settings",
+                "safe",
+                Optimizations.lower_input_delay,
+                None
+
+
+
+            ),
+
+            (
+                "Set High Performance Power Plan",
+                "Maximizes CPU performance. Increases power consumption on laptops.",
+                "safe",
+                Optimizations.set_high_performance,
+                None,
+            ),
+            (
+                "Disable Telemetry Services",
+                "Stops Windows data collection. May affect Windows Update in rare cases.",
+                "safe",
+                Optimizations.disable_telemetry,
+                Optimizations.enable_telemetry,
+            ),
+            (
+                "Disable Xbox Services and GameBar",
+                "Frees up background resources. Disables overlay and recording features.",
+                "safe",
+                Optimizations.disable_xbox_services,
+                Optimizations.enable_xbox_services,
+            ),
+            (
+                "Disable Search Indexing",
+                "Reduces CPU/disk usage. Search results may be slower to appear.",
+                "warning",
+                Optimizations.disable_search_index,
+                Optimizations.enable_search_index,
+            ),
+            (
+                "Service Reducer",
+                "Reduces Services executed on CPU and gives smoother game experience",
+                "safe",
+                Optimizations.reduce_services,
+                Optimizations.restore_services,
+            ),
         ]
 
         self.cards = []

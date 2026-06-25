@@ -1,6 +1,5 @@
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QGraphicsDropShadowEffect
-from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QThread, Signal
-from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel
+from PySide6.QtCore import QThread, Signal
 from src.ui.views.modern_button import ModernButton
 from src.ui.theme import Colors
 from typing import Callable
@@ -34,7 +33,6 @@ class OptimizerCard(QFrame):
         self.is_applied = False
         self._build_ui(title, description, status)
         self._apply_style()
-        self._setup_shadow()
 
     def _build_ui(self, title, description, status):
         layout = QHBoxLayout(self)
@@ -118,31 +116,3 @@ class OptimizerCard(QFrame):
                 background-color: {Colors.BG_TERTIARY};
             }}
         """)
-
-    def _setup_shadow(self):
-        self._shadow = QGraphicsDropShadowEffect()
-        self._shadow.setBlurRadius(14)
-        self._shadow.setColor(QColor(0, 0, 0, 70))
-        self._shadow.setOffset(0, 3)
-        self.setGraphicsEffect(self._shadow)
-
-        self._shadow_anim = QPropertyAnimation(self._shadow, b"blurRadius")
-        self._shadow_anim.setEasingCurve(QEasingCurve.OutCubic)
-
-    def enterEvent(self, event):
-        self._shadow_anim.stop()
-        self._shadow.setColor(QColor(130, 50, 220, 80))
-        self._shadow_anim.setDuration(200)
-        self._shadow_anim.setStartValue(self._shadow.blurRadius())
-        self._shadow_anim.setEndValue(32)
-        self._shadow_anim.start()
-        super().enterEvent(event)
-
-    def leaveEvent(self, event):
-        self._shadow_anim.stop()
-        self._shadow.setColor(QColor(0, 0, 0, 70))
-        self._shadow_anim.setDuration(300)
-        self._shadow_anim.setStartValue(self._shadow.blurRadius())
-        self._shadow_anim.setEndValue(14)
-        self._shadow_anim.start()
-        super().leaveEvent(event)

@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 def run_cmd(cmd: list):
@@ -8,11 +9,14 @@ def run_cmd(cmd: list):
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=2
+            timeout=5
         )
     except subprocess.TimeoutExpired:
             print(f"Timeout: {cmd}")
             return None
+
+
+
 
 class Optimizations:
     @staticmethod
@@ -147,4 +151,47 @@ class Optimizations:
         for svc in un_services:
             run_cmd(["sc", "start", svc])
             run_cmd(["sc", "config", svc , "start=auto"])
-        
+
+    REGS_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "regs")
+
+    @staticmethod
+    def apply_all_reg() -> bool:
+
+        files = [f for f in os.listdir(Optimizations.REGS_PATH) if f.endswith(".reg")]
+
+        if not files:
+                print("No reg file found")
+                return False
+
+        success = True
+
+        for filename in files:
+            path = os.path.join(Optimizations.REGS_PATH, filename)
+            result = run_cmd(["regedit", "/s", path])
+            if result and result.returncode != 0:
+                success = False
+                print(f"failed to apply {filename}")
+
+
+    BAT_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "bat")
+
+    @staticmethod
+    def lower_input_delay():
+        path = os.path.join(Optimizations.BAT_PATH, "lower_input_delay.bat")
+        try:
+            result = subprocess.run(
+                ["cmd", "/c", path],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=60,
+            )
+            log_path = os.path.join(os.environ.get("TEMP", ""), "lower_input_delay.log")
+            success = os.path.exists(log_path)
+            if success:
+                os.remove(log_path)
+            return success
+        except subprocess.TimeoutExpired:
+            print("Timeout: lower_input_delay.bat")
+            return False

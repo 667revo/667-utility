@@ -1,21 +1,29 @@
 {
-    "Basic Apps":{
+    "Main Apps": {
         "Steam": "Valve.Steam",
         "Discord": "Discord.DiscordDesktop",
         "Spotify": "SpotifyAB.SpotifyMusic",
         "Chrome": "Google.Chrome",
-        "Brave": "BraveSoftware.BraveBrowser"
+        "Brave": "BraveSoftware.BraveBrowser",
+        "Epic Games": "EpicGames.EpicGamesLauncher",
+        "Team Speak": "TeamSpeakSystems.TeamSpeakClient "
     },
-    "Development Apps":{
+    "Development Apps": {
         "Visual Studio Code": "Microsoft.VisualStudioCode",
         "GitHub Desktop": "GitHub.GitHubDesktop",
-        "Python": "Python.Python.3.9"
+        "Python": "Python.Python.3.9",
+        "PyCharm": "JetBrains.PyCharm",
+        "GitHub": "GitHub.GitHub",
+        "Git": "Git.Git",
+        "NodeJS": "OpenJS.NodeJS"
     },
     "Tools":{
         "Notepad++": "Notepad++.Notepad++",
         "7-Zip": "7-Zip.7-Zip",
         "Lightshot": "Lightshot.Lightshot",
-        "NVCleanstall": "TechPowerUp.NVCleanstall"
+        "NVCleanstall": "TechPowerUp.NVCleanstall",
+        "Process Lasso": "BitSum.ProcessLasso",
+        "VLC Media Player": "VideoLAN.VLC"
     }
     
 }

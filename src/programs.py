@@ -2,7 +2,10 @@ DEV_PROGRAMS = {
 
 "Visual Studio Code": "Microsoft.VisualStudioCode",
 "GitHub Desktop": "GitHub.GitHubDesktop",
-"Python": "Python.Python.3.13"
+"Python": "Python.Python.3.13",
+"PyCharm": "JetBrains.PyCharm",
+"GitHub": "GitHub.GitHub",
+"Git": "Git.Git"
 
 }
 
