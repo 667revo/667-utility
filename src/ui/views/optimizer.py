@@ -1,3 +1,5 @@
+import subprocess
+
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame, QScrollArea, QHBoxLayout
 from src.ui.views.optimizer_card import OptimizerCard
 from src.ui.views.modern_button import ModernButton
@@ -128,11 +130,26 @@ class OptimizerPage(QWidget):
         scroll.setWidget(scroll_content)
         layout.addWidget(scroll)
 
+        def on_apply_all():
+            for card in self.cards:
+                if not card.is_applied and card.callback:
+                    card._on_click()
+
+        def on_reset_all():
+            for card in self.cards:
+                if card.is_applied and card.undo_callback:
+                    card._on_click()
+
+
+
         bottom = QHBoxLayout()
         apply_all = ModernButton("Apply All Safe", variant="primary")
         apply_all.setFixedWidth(160)
+        apply_all.clicked.connect(on_apply_all)
         reset = ModernButton("Reset Defaults", variant="ghost")
         reset.setFixedWidth(140)
+        reset.clicked.connect(on_reset_all)
+
 
         bottom.addStretch()
         bottom.addWidget(reset)
