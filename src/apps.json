@@ -20,6 +20,7 @@
     "Tools":{
         "Notepad++": "Notepad++.Notepad++",
         "7-Zip": "7-Zip.7-Zip",
+        "OBS" : "OBSProject.OBSStudio ",
         "Lightshot": "Lightshot.Lightshot",
         "NVCleanstall": "TechPowerUp.NVCleanstall",
         "Process Lasso": "BitSum.ProcessLasso",

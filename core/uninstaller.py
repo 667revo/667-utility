@@ -1,6 +1,12 @@
-import winreg
 import subprocess
 import shlex
+import sys
+
+if sys.platform == "win32":
+    import winreg
+
+else:
+    winreg = None
 
 def run_cmd(cmd: list):
     try:
@@ -17,6 +23,9 @@ def run_cmd(cmd: list):
         return None
 
 def get_installed_programs() -> list[dict]:
+    if winreg is None:
+        print("This feature is only available on Windows.")
+        return[]
     programs = []
     keys = [
         (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
@@ -56,11 +65,13 @@ def get_installed_programs() -> list[dict]:
     return sorted(unique, key=lambda x: x["name"].lower())
 
 def uninstall_program(uninstall_str: str) -> bool:
+    if winreg is None:
+        print("This feature is only available on Windows.")
+        return
     if not uninstall_str:
         return False
     try:
         if "msiexec" in uninstall_str.lower():
-            # MSI tabanlı — product code çek
             import re
 
             match = re.search(r"\{[A-F0-9\-]+\}", uninstall_str, re.IGNORECASE)
@@ -71,7 +82,6 @@ def uninstall_program(uninstall_str: str) -> bool:
                     ["msiexec", "/x", uninstall_str.split()[-1], "/qn", "/norestart"]
                 )
         else:
-            # Boşluklu path'leri doğru parse et
             result = run_cmd(shlex.split(uninstall_str))
 
         return result.returncode == 0 if result else False
@@ -79,7 +89,6 @@ def uninstall_program(uninstall_str: str) -> bool:
         print(f"Uninstall error: {e}")
         return False
 
-# Bloatware listesi
 BLOATWARE = [
     "Microsoft.BingNews",
     "Microsoft.BingWeather",
@@ -108,14 +117,14 @@ BLOATWARE = [
 ]
 
 def remove_bloatware() -> bool:
-    # UWP bloatware
+
     for app in BLOATWARE:
         subprocess.run([
             "powershell.exe", "-Command",
             f"Get-AppxPackage *{app}* | Remove-AppxPackage"
         ], capture_output=True, text=True, encoding="utf-8", errors="replace")
 
-    # Edge kaldırma
+    
     subprocess.run([
         "powershell.exe", "-Command",
         r"Get-ChildItem 'C:\Program Files (x86)\Microsoft\Edge\Application\*\Installer' | "

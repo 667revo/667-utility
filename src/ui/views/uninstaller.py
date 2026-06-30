@@ -5,6 +5,13 @@ from src.ui.views.modern_button import ModernButton
 from src.ui.theme import Colors
 from core.uninstaller import get_installed_programs, uninstall_program, remove_bloatware
 
+import sys
+
+if sys.platform == "win32":
+    import winreg
+
+else:
+    winreg = None
 
 class WorkerThread(QThread):
     finished = Signal(bool)
@@ -95,7 +102,7 @@ class UninstallerView(QWidget):
         layout.addWidget(subtitle)
 
         # Bloatware butonu
-        self.bloat_btn = ModernButton("Remove Windows Bloatware (include MSEdge)", variant="danger")
+        self.bloat_btn = ModernButton("Remove Windows Bloatware", variant="danger")
         self.bloat_btn.setFixedHeight(44)
         self.bloat_btn.clicked.connect(self._on_remove_bloatware)
         layout.addWidget(self.bloat_btn)
@@ -135,6 +142,9 @@ class UninstallerView(QWidget):
         layout.addWidget(scroll)
 
     def _load_programs(self):
+        if winreg is None:
+            print("This feature is only available on Windows.")
+            return
         self.all_programs = get_installed_programs()
         self._render(self.all_programs)
 
@@ -159,6 +169,9 @@ class UninstallerView(QWidget):
         self._render(filtered)
 
     def _on_remove_bloatware(self):
+        if winreg is None:
+            print("This feature is only available on Windows.")
+            return
         self.bloat_btn.setEnabled(False)
         self.bloat_btn.setText("Removing bloatware...")
         self.worker = WorkerThread(remove_bloatware)

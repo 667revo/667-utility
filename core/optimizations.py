@@ -195,3 +195,40 @@ class Optimizations:
         except subprocess.TimeoutExpired:
             print("Timeout: lower_input_delay.bat")
             return False
+
+    @staticmethod
+    def disable_background_apps():
+        commands = [
+            "Get-AppxPackage | Where-Object {$_.IsFramework -eq $false} | ForEach-Object {Set-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\$($_.PackageFamilyName)\" -Name 'Disabled' -Value 1 -Force -ErrorAction SilentlyContinue}",
+            'reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications" /v GlobalUserDisabled /t REG_DWORD /d 1 /f',
+            'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy" /v LetAppsRunInBackground /t REG_DWORD /d 2 /f',
+        ]
+
+        for cmd in commands:
+            subprocess.run(
+                ["powershell.exe", "-Command", cmd],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+
+        return True
+
+    @staticmethod
+    def enable_background_apps():
+        commands = [
+            'reg delete "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications" /v GlobalUserDisabled /f',
+            'reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy" /v LetAppsRunInBackground /f',
+        ]
+
+        for cmd in commands:
+            subprocess.run(
+                ["powershell.exe", "-Command", cmd],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+
+        return True

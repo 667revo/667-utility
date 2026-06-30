@@ -1,10 +1,19 @@
 import os
 import shutil
-import winreg
+import sys
+
+if sys.platform == "win32":
+    import winreg
+
+else:
+    winreg = None
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def install_font():
+    if winreg is None:
+        print("This feature is only available on Windows.")
+        return False
     font_src = os.path.join(BASE_DIR, "assets", "JetBrainsMonoNerdFont-Bold.ttf")
 
     if not os.path.exists(font_src):

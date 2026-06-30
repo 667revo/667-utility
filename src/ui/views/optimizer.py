@@ -66,19 +66,15 @@ class OptimizerPage(QWidget):
                 "Applies all registry tweaks for CPU, GPU and system performance.",
                 "warning",
                 Optimizations.apply_all_reg,
-                None
+                None,
             ),
             (
                 "Lower Input Delay",
                 "Lowers input delay with optimizing boot settings",
                 "safe",
                 Optimizations.lower_input_delay,
-                None
-
-
-
+                None,
             ),
-
             (
                 "Set High Performance Power Plan",
                 "Maximizes CPU performance. Increases power consumption on laptops.",
@@ -113,6 +109,13 @@ class OptimizerPage(QWidget):
                 "safe",
                 Optimizations.reduce_services,
                 Optimizations.restore_services,
+            ),
+            (
+                "Disable Background Apps",
+                "Prevents UWP apps from running in the background.",
+                "safe",
+                Optimizations.disable_background_apps,
+                Optimizations.enable_background_apps,
             ),
         ]
 

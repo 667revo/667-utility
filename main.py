@@ -9,10 +9,11 @@ install_font()
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def is_admin():
+    if sys.platform != "win32":
+        return True
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-
+    except Exception:
         return False
 
 if __name__ == "__main__":
